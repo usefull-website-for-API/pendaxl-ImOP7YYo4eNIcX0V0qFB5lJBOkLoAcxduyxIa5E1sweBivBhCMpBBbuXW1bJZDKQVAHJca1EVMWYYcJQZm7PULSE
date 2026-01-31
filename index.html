@@ -4,34 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Streamix - CinePulse</title>
-  
   <script src="security.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Bande d'attention (uniquement sur /auth/login) -->
-  <div class="alert-banner" id="alert-banner" style="display: none;">
+  <div class="alert-banner" id="alert-banner">
     Attention, veuillez vous connecter via la connexion rapide.
   </div>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      if (window.location.pathname === '/auth/login' || window.location.pathname === '/auth/login/') {
-        var banner = document.getElementById('alert-banner');
-        if (banner) {
-          banner.style.display = 'flex';
-          console.log('[v0] Banner displayed on /auth/login');
-        }
-      }
-    });
-  </script>
 
   <div id="app-container" class="app-container">
-    
     <div class="loading-overlay" id="loading">
       <div class="spinner"></div>
     </div>
-    
     <iframe id="service-frame" src="about:blank" frameborder="0" allowfullscreen></iframe>
   </div>
 
