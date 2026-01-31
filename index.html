@@ -10,6 +10,16 @@
 </head>
 <body>
 
+  <!-- Bande d'attention (uniquement sur /auth/login) -->
+  <div class="alert-banner" id="alert-banner" style="display: none;">
+    Attention, veuillez vous connecter via la connexion rapide.
+  </div>
+  <script>
+    if (window.location.pathname === '/auth/login') {
+      document.getElementById('alert-banner').style.display = 'flex';
+    }
+  </script>
+
   <div id="app-container" class="app-container">
     
     <div class="loading-overlay" id="loading">
