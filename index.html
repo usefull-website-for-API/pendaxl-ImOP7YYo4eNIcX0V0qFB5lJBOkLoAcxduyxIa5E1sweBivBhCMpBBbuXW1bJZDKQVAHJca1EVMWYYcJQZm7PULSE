@@ -15,9 +15,15 @@
     Attention, veuillez vous connecter via la connexion rapide.
   </div>
   <script>
-    if (window.location.pathname === '/auth/login') {
-      document.getElementById('alert-banner').style.display = 'flex';
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.location.pathname === '/auth/login' || window.location.pathname === '/auth/login/') {
+        var banner = document.getElementById('alert-banner');
+        if (banner) {
+          banner.style.display = 'flex';
+          console.log('[v0] Banner displayed on /auth/login');
+        }
+      }
+    });
   </script>
 
   <div id="app-container" class="app-container">
