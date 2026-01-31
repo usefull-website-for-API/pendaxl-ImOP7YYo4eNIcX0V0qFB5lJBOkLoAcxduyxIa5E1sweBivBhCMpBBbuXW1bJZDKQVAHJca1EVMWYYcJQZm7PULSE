@@ -7,11 +7,9 @@ const MOVIX_URL = "https://cinepulse.lol/";
 // LOGIQUE PRINCIPALE
 // ============================================
 
-// On récupère uniquement les éléments qui existent encore dans votre HTML
 const serviceFrame = document.getElementById("service-frame");
 const loadingOverlay = document.getElementById("loading");
 
-// Fonction pour arrêter le chargement (utilisée plusieurs fois)
 const stopLoading = () => {
   if (loadingOverlay && !loadingOverlay.classList.contains("hidden")) {
     loadingOverlay.classList.add("hidden");
@@ -20,28 +18,39 @@ const stopLoading = () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   
-  // 1. Sauvegarde pour la forme (optionnel, évite les erreurs si StorageBridge est absent)
   if (typeof StorageBridge !== 'undefined') {
       StorageBridge.set("last-service", "movix");
   } else {
-      // Fallback simple si StorageBridge n'est pas défini
       localStorage.setItem("streamix-last-service", "movix");
   }
 
-  // 2. Lancer le chargement du site
   if (serviceFrame) {
       serviceFrame.src = MOVIX_URL;
 
-      // 3. Gestion de la fin du chargement
+      // SOLUTION B : Intercepter les tentatives de connexion
+      // Note : À cause des restrictions de sécurité (Same-Origin), 
+      // on ne peut pas lire l'URL interne de l'iframe si elle change de domaine.
+      // On utilise donc un intervalle pour vérifier si l'iframe tente d'aller chez Google.
+      
+      const checkGoogleAuth = setInterval(() => {
+        try {
+          const currentUrl = serviceFrame.contentWindow.location.href;
+          if (currentUrl.includes("accounts.google.com")) {
+            // On ouvre Google dans un vrai onglet
+            window.open(currentUrl, '_blank');
+            // On remet l'iframe sur le site d'origine pour éviter l'erreur 403
+            serviceFrame.src = MOVIX_URL; 
+          }
+        } catch (e) {
+          // Si on a une erreur ici, c'est souvent parce que l'iframe est 
+          // déjà sur un autre domaine (sécurité cross-origin).
+          // C'est un signe que la navigation a quitté cinepulse.lol
+        }
+      }, 500);
+
       serviceFrame.onload = stopLoading;
       serviceFrame.onerror = stopLoading;
   }
 
-  // 4. SÉCURITÉ : Forcer l'arrêt du chargement après 4 secondes
-  // C'est ça qui va empêcher le chargement infini si le site bloque
-  setTimeout(() => {
-    stopLoading();
-    console.log("Chargement forcé terminé (Timeout de sécurité)");
-  }, 4000);
-
+  setTimeout(stopLoading, 4000);
 });
